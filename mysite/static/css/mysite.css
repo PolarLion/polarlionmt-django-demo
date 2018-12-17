@@ -1,0 +1,88 @@
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  padding-top: 60px;
+}
+/*.table {
+  color: #BDBDBD
+  background-color: #fff;
+}*/
+.cat-image {
+  position:center;
+}
+
+.navbar-my {
+  /*background-image: url(navbar.jpg);*/
+}
+
+.button-nmt{
+  text-align: center;
+  font-weight:bold;
+  font-family:Verdana;
+  background-color:#2E2E2E;
+  color:#BDBDBD;
+  background-repeat: no-repeat;
+  /*background-image: url(nmt.jpg);*/
+
+}
+
+.button-baidu {
+  margin-left: 20px;
+  width: 132px;
+  background-color:transparent;
+  color:transparent;
+  background-image: url(baidu.png);
+  background-repeat: no-repeat;
+}
+
+.select-my {
+  background-color:#2E2E2E;
+  color:#BDBDBD;
+}
+
+.table {
+  min-height: 100%;
+  position: relative;
+}
+.button-right {
+  float:right
+}
+
+
+.button-select {
+  font-size:100%;
+  padding-left: 17%;
+  padding-right: 17%;
+}
+
+
+.footer {
+  text-align: center;
+  border-top: 1px solid #E6E6E6;
+  /*position: absolute;*/
+  /*position: relative;*/
+  bottom: 0;
+  width: 100%;
+}
+.footer p {
+  margin-bottom: 0;
+  color: #555;
+}
+.footer-links {
+  margin: 10px 0;
+}
+.footer-links li {
+  display: inline;
+  padding: 0 2px;
+}
+.footer-links li:first-child {
+  padding-left: 0;
+}
+
+
+/*. {
+  padding: 40px 15px;
+  text-align: center;
+}*/  

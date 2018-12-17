@@ -1,0 +1,40 @@
+<div class="row">
+	<div class="col-md-1 col-md-offset-1">
+		<h4><p>model</p></h4>
+	</div>
+	<div class="col-md-1">
+	  <select class="button button-select select-my" id="model">
+	    <!-- <option value="zh-en" id="zh-en">Zh-En</option> -->
+	    <!-- <option value="zh-zh" id="zh-zh">Zh-Zh</option> -->
+	    <option value="transformer" id="transformer">Transformer</option>
+	    <option value="lstm" id="lstm">LSTM</option>
+	    <!-- <option value="GNMT" id="gnmt">GNMT</option> -->
+	  </select>
+	</div>
+	<div class="col-md-1"><h4><p>language</p></h4></div>
+	<div class="col-md-1">
+	  <select class="button button-select select-my" id="language">
+	    <!-- <option value="zh-en" id="zh-en">Zh-En</option> -->
+	    <!-- <option value="zh-zh" id="zh-zh">Zh-Zh</option> -->
+	    <option value="zh-en" id="zh-en">Zh-En</option>
+	    <option value="en-zh" id="en-zh">En-Zh</option>
+	  </select>
+	</div>
+</div>
+
+<!-- <div class="row"><div class="col-md-4 col-md-offset-1" id="translate"><h3><p>Translate</p></h3></div></div> -->
+
+<div class="row">
+	<div class="col-md-4 col-md-offset-1">
+	  <textarea class="form-control" id="sourceinput" placeholder="Source language" rows="5"></textarea>
+	</div>
+	<div class="col-md-4 col-md-offset-0">
+	  <textarea class="form-control" id="targetinput" placeholder="Target language" rows="5" readonly></textarea>
+	</div>
+</div>
+
+<div class="row">
+  <div class="col-md-1 col-md-offset-1"><h3><a id="nmt" class="button button-nmt">NMT</a></h3></div>
+  <!--<div class="col-md-1 col-md-offset-0"><h3><a id="smt" class="button">SMT</a></h3></div>-->
+  <div class="col-md-1 col-md-offset-0"><h3><a id="baidu" class="button button-baidu"></a></h3></div>
+</div>
