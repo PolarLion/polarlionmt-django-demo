@@ -24,6 +24,7 @@ urlpatterns = [
     re_path('^home', views.index),
     re_path('^contactpage', views.contactpage),
     re_path('^nmt/(.*)', views.nmt),
+    re_path('^language_detect/(.*)', views.language_detect),
     # path('admin/', admin.site.urls),
     # url(r'^smt/(.*)', views.smt),
 ]

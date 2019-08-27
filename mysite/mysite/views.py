@@ -5,7 +5,7 @@ import sys
 
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
-from mysite.untils import *
+from mysite.untils import nmt_caller, language_detect_caller
 
 
 def index(request):
@@ -26,4 +26,8 @@ def nmt(request, a=None):
   print("views.py nmt()", query, ip, model, language)
   return HttpResponse(nmt_caller(query, ip, model, language))
   
-
+def language_detect(request, a=None):
+  print("views.py request", request, type(request))
+  query = request.GET.get('q', None)
+  print("views.py language_detect()", query)
+  return HttpResponse(language_detect_caller(query))

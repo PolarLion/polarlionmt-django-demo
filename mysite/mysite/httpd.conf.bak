@@ -1,0 +1,20 @@
+LoadModule wsgi_module path/to/your-mod_wsgi/mod_wsgi-py36.cpython-36m-x86_64-linux-gnu.so
+DocumentRoot /path/to/your-site/mysite/
+WSGIScriptAlias /polarlionmt  /path/to/your-site/mysite/wsgi.py
+WSGIPythonPath /path/to/your-site/
+Alias /static/ /path/to/your-site/static/
+<Directory /path/to/your-site/static>
+Order deny,allow
+
+Options Indexes FollowSymLinks
+AllowOverride All
+Require all granted
+Allow from all
+</Directory>
+<Directory /path/to/your-site/mysite>
+<Files wsgi.py>
+Require all granted
+</Files>
+</Directory>
+
+

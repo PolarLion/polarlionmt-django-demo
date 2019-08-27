@@ -42,11 +42,15 @@ if (RTCPeerConnection) (function () {
     }
 })(); 
 
+
 var global_align_list;
 var global_target_text;
 var global_source_text;
-var golbal_model_list = ['transformer']
-var golbal_language_list = ['en-zh','zh-en']
+//var global_model_list = ['transformer', 't2t-bigcorpus']
+var global_model_list = ['transformer', 'lstm']
+//var global_language_list = ['en-zh','zh-en']
+var global_source_list = ['detect', 'zh', 'en', 'ug']
+var global_language_list = ['zh-en','en-zh','ug-zh']
 
 
 function save_result(click_type, language){
@@ -61,6 +65,7 @@ function save_result(click_type, language){
   // $("#targetinput").html(decodeURI("undefined operation"));
   document.getElementById("resultstablebody").innerHTML="<tr><td>"+col1+"</td><td>"+col2+"</td><td>"+col3+"</td><td>"+col4+"</td><td>"+col5+"</td></tr>"+document.getElementById("resultstablebody").innerHTML;
 }
+
 
 function show_alignment(source_text, target_text, align_list){
   var body_width = document.body.clientWidth/12*3.5;
@@ -144,6 +149,7 @@ function show_alignment(source_text, target_text, align_list){
   cxt.stroke();
 }
 
+
 function show_large_alignment(source_text, target_text, align_list){
   console.log("in show_large_alignment")
   var body_width = document.body.clientWidth;
@@ -214,16 +220,90 @@ function show_large_alignment(source_text, target_text, align_list){
   align_page.document.close()
 }
 
+
+function language_detect(){
+  return new Promise((resolve, reject) => {
+    var src_language = document.getElementById("sourcelanguage");
+    var tgt_language = document.getElementById("targetlanguage");
+    var source_val = document.getElementById("sourceinput").value;
+    console.log('detect')
+    var url = document.location.toString();
+    language_detect_url = url + "../language_detect/"
+    console.log("language_detect_url:", language_detect_url)
+    $.ajax({
+      url: language_detect_url,
+      type: 'get',
+      dataType: 'json',
+      data: {
+          q: source_val,
+      },
+      success: function (data) {
+        console.log(data)
+        console.log(typeof(data))
+        var obj = data
+        console.log(obj)
+        src_language.value = obj["language"]
+        console.log("obj[\"language\"]",obj["language"])
+
+        var osel = document.getElementById("sourcelanguage"); //得到select的ID
+        var opts = osel.getElementsByTagName("option");//得到数组option
+        var source_language_index = global_source_list.indexOf(obj["language"])
+        console.log("source_language_index", source_language_index)
+        if (source_language_index >= 0) {
+          opts[source_language_index].selected = true;
+        }
+        // document.getElementById("sourcelanguage").innerHTML=decodeURI(obj["language"]);
+        var language_pair = src_language.value + '-' + tgt_language.value
+        console.log("in language_detect() language_pair", language_pair)
+        resolve(language_pair)
+      }
+    });
+  })
+}
+
+// var readFile = (path) => {
+//     return new Promise((resolve, reject) => {
+//         fs.readFile(path, (err, data) => {
+//             if (err) {
+//               reject(err)
+//             };
+
+//             resolve(data)
+//         })
+//     })
+// }
+
+// var asyncReadFile = async function() {
+//     var f1 = await readFile(fileA);
+//     var f2 = await readFile(fileB);
+//     console.log(f1.toString())
+//     console.log(f2.toString())
+// }
+
 $(function() {
-  var language = document.getElementById("language");
-	$("#nmt").on("click", function() {
+	$("#nmt").on("click", async function() {
+    var src_language = document.getElementById("sourcelanguage");
+    var tgt_language = document.getElementById("targetlanguage");
+    var language_pair = src_language.value + '-' + tgt_language.value
+    // var detected = 1
+    if (source_val != '' && src_language.value == "detect") {
+      console.log("in language_detect()")
+      // detected = 0
+      language_pair = await language_detect()
+    }
+    // while (language_pair == undefined) {
+      // console.log("in while", language_pair)
+      // test()
+    // }
+    console.log("language_pair", language_pair)
+
     var model = document.getElementById("model");
-    if (golbal_model_list.indexOf(model.value) < 0) {
+    if (global_model_list.indexOf(model.value) < 0) {
       alert("the model " + model.value + " is not support by now")
       return
     }
-    if (golbal_language_list.indexOf(language.value) < 0) {
-      alert("the language " + language.value + " is not support by now")
+    if (global_language_list.indexOf(language_pair) < 0) {
+      alert("the language " + language_pair + " is not support by now")
       return
     }
     var url = document.location.toString();
@@ -238,7 +318,9 @@ $(function() {
     // console.log(language.value)
     $("#targetinput").html(decodeURI(""));
 		var source_val = document.getElementById("sourceinput").value;
-    if (source_val == ''){ document.getElementById("sourceinput").focus(); }
+    if (source_val == ''){ 
+      document.getElementById("sourceinput").focus(); 
+    }
     else {
       console.log("source_val: "+source_val)
       $.ajax({
@@ -249,7 +331,7 @@ $(function() {
             q: source_val,
             model: model.value,
             ip: displayAddrs[0],
-            language: language.value
+            language: language_pair
         },
         success: function (data) {
           console.log(data)
@@ -263,7 +345,7 @@ $(function() {
           align_list = obj["attent"]
           console.log(align_list)
           document.getElementById("targetinput").innerHTML=decodeURI(obj["tgt"]);
-          save_result(model.value, language.value);
+          save_result(model.value, language_pair);
           target_text.push("<eos>");
           global_align_list = align_list.valueOf();
           global_target_text = target_text.valueOf();
@@ -271,27 +353,43 @@ $(function() {
           show_alignment(source_text, target_text, align_list);
         }
       });
-
     }
 	});
-  $("#baidu").on("click", function() {
+  $("#baidu").on("click", async function() {
+    var src_language = document.getElementById("sourcelanguage");
+    var tgt_language = document.getElementById("targetlanguage");
+    var language_pair = src_language.value + '-' + tgt_language.value
+
+    var source_val = document.getElementById("sourceinput").value;
+
+    if (source_val != '' && src_language.value == "detect") {
+      console.log("in language_detect()")
+      // detected = 0
+      language_pair = await language_detect()
+    }
+
+    if (global_language_list.indexOf(language_pair) < 0) {
+      alert("the language " + language_pair + " is not support by now")
+      return
+    }
+
     $("#targetinput").html(decodeURI(""));
     var appid = '20160409000018151';
     var key = 'E0ZOUoKvwIEwNELiR0lJ';
     var salt = (new Date).getTime();
     var query = document.getElementById("sourceinput").value;
     // 多个query可以用\n连接  如 query='apple\norange\nbanana\npear'
-    var from = '';
-    var to = '';
-    console.log(language.value)
-    if (language.value=="zh-en") {
-      from = 'zh';
-      to = 'en';
-    }
-    else if (language.value=="en-zh"){
-      from = 'en';
-      to = 'zh';
-    }
+    var from = src_language.value;
+    var to = tgt_language.value;
+    // console.log(language.value)
+    // if (language.value=="zh-en") {
+    //   from = 'zh';
+    //   to = 'en';
+    // }
+    // else if (language.value=="en-zh"){
+    //   from = 'en';
+    //   to = 'zh';
+    // }
     var str1 = appid + query + salt +key;
     var sign = MD5(str1);
     if (query == ''){
@@ -312,7 +410,7 @@ $(function() {
         },
         success: function (data) {
           $("#targetinput").html(decodeURI(data['trans_result'][0]['dst']));
-          save_result("Baidu", language.value);
+          save_result("Baidu", language_pair);
           document.getElementById("alignment").innerHTML = "<h3><p>Alignment Matrix</p></h3>"
         }
       });

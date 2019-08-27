@@ -7,17 +7,26 @@
 	    <!-- <option value="zh-en" id="zh-en">Zh-En</option> -->
 	    <!-- <option value="zh-zh" id="zh-zh">Zh-Zh</option> -->
 	    <option value="transformer" id="transformer">Transformer</option>
+      <!-- <option value="t2t-bigcorpus" id="t2t-bigcorpus">T2T-BigCorp</option> -->
 	    <option value="lstm" id="lstm">LSTM</option>
 	    <!-- <option value="GNMT" id="gnmt">GNMT</option> -->
 	  </select>
 	</div>
-	<div class="col-md-1"><h4><p>language</p></h4></div>
+	<div class="col-md-1"><h4><p>Source</p></h4></div>
 	<div class="col-md-1">
-	  <select class="button button-select select-my" id="language">
-	    <!-- <option value="zh-en" id="zh-en">Zh-En</option> -->
-	    <!-- <option value="zh-zh" id="zh-zh">Zh-Zh</option> -->
-	    <option value="zh-en" id="zh-en">Zh-En</option>
-	    <option value="en-zh" id="en-zh">En-Zh</option>
+	  <select class="button button-select select-my" id="sourcelanguage">
+	  	<!-- 语言选择 默认为自动检测 -->
+      <option value="detect" id="detect">Detect</option>
+	    <option value="zh" id="zh">Chinese</option>
+	    <option value="en" id="en">English</option>
+      <option value="ug" id="ug">Uygur</option>
+	  </select>
+	</div>
+	<div class="col-md-1"><h4><p>Target</p></h4></div>
+	<div class="col-md-1">
+	  <select class="button button-select select-my" id="targetlanguage">
+	    <option value="en" id="en">English</option>
+	    <option value="zh" id="zh">Chinese</option>
 	  </select>
 	</div>
 </div>

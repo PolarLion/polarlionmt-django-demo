@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 
 import time
@@ -6,6 +7,15 @@ import sys
 import json
 import http.client,urllib.parse
 import pyltp
+from mysite.language_detect import load_ngram_dict,sentence_to_feature
+
+language_list = ['Zh', 'En', 'Ug']
+max_n = 4
+language_ngram_dict = {}
+for language in language_list:
+  language_ngram_dict[language] = load_ngram_dict("/home/xwshi/PolarlionSite/PolarlionMT/mysite/static/gram/%s" % language)
+  # filename = "/home/xwshi/PolarlionSite/PolarlionMT/mysite/static/gram/%s" % language
+  # language_ngram_dict[language] = load_ngram_dict(filename)
 
 ltp_segmentor = pyltp.Segmentor()
 ltp_segmentor.load("/home/xwshi/tools/ltp_data_v3.4.0/cws.model")
@@ -13,7 +23,12 @@ ltp_segmentor.load("/home/xwshi/tools/ltp_data_v3.4.0/cws.model")
 # import urllib2
 # import commands
 
-model_id = {"transformer":{"en-zh":100, "zh-en":101},}
+
+model_id = {
+  "transformer":{"en-zh":100, "zh-en":101, "ug-zh":104},
+  # 't2t-bigcorpus':{'zh-en':102},
+  'lstm':{'zh-en':103}
+  }
 
 
 def save_query(model="nmt", language="null", client_ip="null", str_query="null", str_return="null", logfilename="/home/xwshi/PolarlionSite/PolarlionMT/mysite/query.log"):
@@ -58,6 +73,35 @@ def nmt_caller(query, ip="127.0.0.1", model="transformer", language="en-zh"):
   return json.dumps(data)
 
   # return data
+
+
+
+def language_detect_caller(query):
+  print("untils.py nmt_caller() query", query)
+  language_score = []
+  for language in language_list:
+    score, _ = sentence_to_feature(query, language_ngram_dict[language])
+    language_score.append(score)
+  # score, n_score = sentence_to_feature("I have a dream !", en_ngram_dict)
+  # print(score, n_score)
+  # score, n_score = sentence_to_feature("I have a dream !", zh_ngram_dict)
+  # print(score, n_score)
+  language = language_list[language_score.index(max(language_score))]
+  data = {'language': language.lower()}
+
+  logfile = open("/home/xwshi/PolarlionSite/PolarlionMT/mysite/language_detect.log", 'a', encoding='utf8')
+  logfile.write('\n')
+  logfile.write(str(time.strftime('%Y-%m-%d %X',time.localtime(time.time()))).strip()+'\n')
+  # logfile.write("%s\n" % str("我有一个梦想" == query))
+  # zhscore, _ = sentence_to_feature("我有一个梦想", language_ngram_dict['Zh'])
+  # logfile.write("zhscore %s\n" % str(zhscore))
+  logfile.write("%s %s\n" % (query.strip(), type(query)))
+  for i, lang in enumerate(language_list):
+    logfile.write("%s %f\n" % (lang, language_score[i]))
+  logfile.close()
+
+  return json.dumps(data)
+
 
 if __name__=="__main__":
   nmt_caller(sys.argv[1])
